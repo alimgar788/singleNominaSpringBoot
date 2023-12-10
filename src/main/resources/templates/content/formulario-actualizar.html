@@ -1,0 +1,49 @@
+<h2>Actualizar Detalles del Empleado</h2>
+<div class="formulario">
+  <form th:action="@{/index}" method="post">
+    <input type="hidden" name="opcion" value="actualiza">
+    <input type="hidden" name="editar" th:value="${editar}">
+    <div class="form_group">
+      <input class="form_field" type="text" name="nombre" th:value="${empleado.nombre}" required>
+      <label class="form_label">Nombre:</label>
+    </div>
+    <div class="form_group">
+      <input class="form_field" type="text" name="dni" th:value="${empleado.dni}" readonly required>
+      <label class="form_label">DNI:</label>
+    </div>
+    <div>
+      <label>Sexo:</label>
+      <div id="formulario-sexo">
+        <label class="radio-button">
+          <input type="radio" th:checked="${empleado.getSexo().toString() == 'M'}" name="sexo" value="M" required>
+          <span class="radio"></span>
+          Masculino
+        </label>
+        <label class="radio-button">
+          <input type="radio" th:checked="${empleado.getSexo().toString() == 'F'}" name="sexo" value="F" required>
+          <span class="radio"></span>
+          Femenino
+        </label>
+        <label class="radio-button">
+          <input type="radio" th:checked="${empleado.getSexo().toString() == 'I'}" name="sexo" value="I" required>
+          <span class="radio"></span>
+          N/C
+        </label>
+      </div>
+    </div>
+    <div class="form_group">
+      <select class="form_field select" name="categoria" id="categoria">
+        <option th:each="i : ${#numbers.sequence(1, 9)}"
+                th:value="${i}" th:selected="${empleado.categoria == i}">
+          [[${i}]]
+        </option>
+      </select>
+      <label class="form_label">Categor&iacute;a:</label>
+    </div>
+    <div class="form_group">
+      <input class="form_field" type="number" min="0" max="65" step="0.1" name="anyos" th:value="${empleado.anyos}" required>
+      <label class="form_label">Antig&uumledad</label>
+    </div>
+    <input type="submit" value="Actualizar">
+  </form>
+</div>

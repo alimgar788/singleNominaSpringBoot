@@ -1,0 +1,43 @@
+<h2>Registro de nuevo empleado</h2>
+<div class="formulario">
+  <form id="formulario-registro" th:action="@{/index}" method="post">
+    <input type="hidden" name="opcion" value="registro">
+    <div class="form_group">
+      <input class="form_field" type="text" id="nombre" name="nombre" placeholder="Ej: Alba Lima Garcia" required>
+      <label class="form_label">Nombre:</label>
+    </div>
+    <div class="form_group">
+      <input class="form_field" type="text" id="dni" name="dni" placeholder="Ej: 12345678A" required>
+      <label class="form_label">DNI:</label>
+    </div>
+    <label>Sexo:</label>
+    <div id="formulario-sexo">
+      <label class="radio-button">
+        <input type="radio" name="sexo" value="M" required>
+        <span class="radio"></span>
+        Masculino
+      </label>
+      <label class="radio-button">
+        <input type="radio" name="sexo" value="F" required>
+        <span class="radio"></span>
+        Femenino
+      </label>
+      <label class="radio-button">
+        <input type="radio" name="sexo" value="I" required>
+        <span class="radio"></span>
+        N/C
+      </label>
+    </div>
+    <div class="form_group">
+      <select class="form_field select" name="categoria" id="categoria">
+        <option th:each="i : ${#numbers.sequence(1,9)}" th:value="${i}" th:text="${i}"></option>
+      </select>
+      <label class="form_label">Categor&iacute;a:</label>
+    </div>
+    <div class="form_group">
+      <input class="form_field" type="number" step="0.1" id="anyos" name="anyos" min="0" required>
+      <label class="form_label">Antig&uumledad</label>
+    </div>
+    <input type="submit" value="Registrar">
+  </form>
+</div>

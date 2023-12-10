@@ -1,0 +1,31 @@
+<h2>Lista de Empleados</h2>
+
+<div th:if="${usuarioCreado}" class="info">
+  <p>El empleado ha sido creado correctamente</p>
+</div>
+
+<div class="contenido">
+  <div th:if="${listaEmpleados.size() > 0}">
+    <table class="tabla">
+      <tr>
+        <th>Nombre</th>
+        <th>DNI</th>
+        <th class="center">Sexo</th>
+        <th class="center">Categor&iacute;a</th>
+        <th class="center">Antig&uumledad</th>
+      </tr>
+      <tr th:each="empleado : ${listaEmpleados}">
+        <td th:text="${empleado.nombre}"></td>
+        <td th:text="${empleado.dni}"></td>
+        <td class="center" th:text="${empleado.getSexoFormato()}"></td>
+        <td class="center" th:text="${empleado.categoria}"></td>
+        <td class="center" th:text="${empleado.anyos}"></td>
+      </tr>
+    </table>
+  </div>
+  <div th:unless="${listaEmpleados.size() > 0}">
+    <div>
+      <p>No hay empleados registrados actualmente.</p>
+    </div>
+  </div>
+</div>

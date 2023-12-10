@@ -1,0 +1,57 @@
+<h2>Actualización de empleados</h2>
+
+<div th:if="${actualizado}" class="info">El empleado ha sido actualizado correctamente</div>
+<div th:if="${eliminado}" class="info">El empleado ha sido eliminado correctamente</div>
+
+<div class="formulario horizontal">
+    <form id="formulario-filtro-busqueda-empleado" th:action="@{/index}" method="get">
+        <input type="hidden" name="opcion" value="actualiza">
+        <div class="form_group">
+            <select class="form_field" name="campo">
+                <option value="nombre" th:selected="${campo == 'nombre'}">Nombre</option>
+                <option value="dni" th:selected="${campo == 'dni'}">DNI</option>
+                <option value="sexo" th:selected="${campo == 'sexo'}">Sexo</option>
+                <option value="categoria" th:selected="${campo == 'categoria'}">Categor&iacute;a</option>
+                <option value="anyos" th:selected="${campo == 'anyos'}">Antig&uumledad</option>
+                <option value="salario" th:selected="${campo == 'salario'}">Salario</option>
+            </select>
+            <label class="form_label">Buscar por:</label>
+        </div>
+        <div class="form_group">
+            <input class="form_field" type="text" name="valor" th:value="${valor}" placeholder="Filtrar por el dato...">
+            <label class="form_label">Valor de búsqueda:</label>
+        </div>
+        <div class="button_row">
+            <button id="reset" onclick="resetearFormulario(event)">Resetear</button>
+            <input type="submit" value="Buscar"/>
+        </div>
+    </form>
+</div>
+
+<div class="listado">
+    <table class="tabla">
+        <tr>
+            <th>Nombre</th>
+            <th>DNI</th>
+            <th class="center">Sexo</th>
+            <th class="center">Categor&iacute;a</th>
+            <th class="center">Antig&uumledad</th>
+            <th class="actions center">Acciones</th>
+        </tr>
+        <tr th:each="empleado : ${listaEmpleados}">
+            <td th:text="${empleado.nombre}"></td>
+            <td th:text="${empleado.dni}"></td>
+            <td class="center" th:text="${empleado.getSexoFormato()}"></td>
+            <td class="center" th:text="${empleado.categoria}"></td>
+            <td class="center" th:text="${empleado.anyos}"></td>
+            <td class="actions center">
+                <a th:href="@{/index(opcion='actualiza', editar=${empleado.dni})}">
+                    <img th:src="@{/img/editar.png}" class="icono-modificar">
+                </a>
+                <a th:onclick="|confirmarEliminacion(event)|" th:href="@{/index(opcion='actualiza', eliminar=${empleado.dni})}">
+                    <img th:src="@{/img/papelera.png}" class="icono-eliminar">
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>

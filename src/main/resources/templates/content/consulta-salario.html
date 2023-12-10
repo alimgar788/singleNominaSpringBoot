@@ -1,0 +1,20 @@
+<div class="consulta-salario">
+  <div th:if="${not #strings.isEmpty(salario)}">
+    <div>
+      <h3>El salario correspondiente al empleado:</h3>
+    </div>
+    <div>
+      <p>Con dni <strong th:text="${dni}"></strong> es de: <strong th:text="${salario}"></strong> &euro; al año </p>
+    </div>
+  </div>
+  <div th:if="${not #strings.isEmpty(error)}">
+    <div>
+      <p th:text="${error}"></p>
+    </div>
+  </div>
+  <div th:unless="${not #strings.isEmpty(salario) or not #strings.isEmpty(error)}">
+    <div>
+      <p>No se encuentra salario asociado a este dni</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="error">
+    <div>
+        <h3>¡Vaya! Ha ocurrido un error</h3>
+    </div>
+    <div th:if="${mensajeError != ''}">
+        <div>
+            <p th:text="${mensajeError}"></p>
+        </div>
+    </div>
+</div>

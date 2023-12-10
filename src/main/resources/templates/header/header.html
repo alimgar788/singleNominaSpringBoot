@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300&family=Roboto:wght@100;300;400;500;700&family=Special+Elite&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/header.js}"></script>
+    <script th:src="@{/js/validacionFormulario.js}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>WEB DE GESTI&Oacute;N DE N&Oacute;MINAS</h1>
+    </div>
+    <div class="content-wrapper">
+        <div class="menu">
+            <div th:if="${logueado != null && logueado}">
+                <a class="boton-volver" onclick="volver(event)">Volver</a>
+                <a th:href="@{/index?opcion=registro}" th:class="${paginaActual == 'registro' ? 'selected' : ''}">Registro
+                    de empleado</a>
+                <a th:href="@{/index?opcion=listado}" th:class="${paginaActual == 'listado' ? 'selected' : ''}">Lista de
+                    empleados</a>
+                <a th:href="@{/index?opcion=consulta}" th:class="${paginaActual == 'consulta' ? 'selected' : ''}">Consultar
+                    salario</a>
+                <a th:href="@{/index?opcion=actualiza}" th:class="${paginaActual == 'actualiza' ? 'selected' : ''}">Actualizar
+                    datos</a>
+                <a th:href="@{/index?opcion=cierraSesion}"
+                   th:class="${paginaActual == 'cierraSesion' ? 'selected' : ''}">Cerrar sesi&oacute;n</a>
+            </div>
+            <div th:if="${logueado == null || !logueado}">
+                <a th:href="@{/index?opcion=login}" th:class="${paginaActual == 'login' ? 'selected' : ''}">Acceso a
+                    usuarios</a>
+            </div>
+        </div>
+    <div class="content">
