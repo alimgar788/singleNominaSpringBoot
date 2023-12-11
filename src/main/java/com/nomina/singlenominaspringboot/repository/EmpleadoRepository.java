@@ -17,7 +17,7 @@ public interface EmpleadoRepository extends CrudRepository<Empleado, String> {
 
     List<Empleado> findAllByEstadoEmpleadoIsTrueAndAnyos(Double anyos);
 
-    List<Empleado> findAllByEstadoEmpleadoIsTrueAndNombreContainingIgnoreCase(String nombre); // Tengo dudas sobre si así filtra por letras o por palabras completas
+    List<Empleado> findAllByEstadoEmpleadoIsTrueAndNombreContainingIgnoreCase(String nombre);
 
     List<Empleado> findAllByEstadoEmpleadoIsTrueAndSexo(String sexo);
 

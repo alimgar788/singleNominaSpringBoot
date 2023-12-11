@@ -27,7 +27,16 @@ public class IndexController {
     @Autowired
     AdministradorService administradorService;
 
-
+    /**
+     * Maneja las peticiones GET en la ruta "/index". Determina las acciones a realizar según la opción proporcionada,
+     * establece atributos comunes en el modelo y devuelve la vista correspondiente.
+     *
+     * @param model El modelo utilizado para almacenar atributos y datos a ser utilizados por la vista.
+     * @return La vista correspondiente a la opción seleccionada o una vista predeterminada ("index" por defecto).
+     * En caso de necesitar inicio de sesión, redirige a la página de inicio de sesión.
+     * Si la opción "actualiza" redirige a una vista diferente, devuelve la vista redirigida.
+     * Las opciones disponibles son: "registro", "listado", "consulta", "actualiza", "login", "cierraSesion" y "bienvenida".
+     */
     @GetMapping("/index")
     public String doGet(Model model) {
         if (this.necesitaLogin()) {
@@ -65,6 +74,17 @@ public class IndexController {
         return view;
     }
 
+    /**
+     * Maneja las peticiones POST en la ruta "/index". Evalúa la opción proporcionada y realiza acciones correspondientes
+     * en función de la misma, estableciendo atributos comunes en el modelo y devolviendo la vista resultante.
+     *
+     * @param model El modelo utilizado para almacenar atributos y datos a ser utilizados por la vista.
+     * @return La vista correspondiente a la opción seleccionada o una vista predeterminada ("index" por defecto).
+     * En caso de necesitar inicio de sesión, redirige a la página de inicio de sesión.
+     * Si la opción "registro", "actualiza" o "login" redirige a una vista diferente, devuelve la vista redirigida.
+     * Si la opción es diferente a las mencionadas, realiza una acción predeterminada.
+     * Las opciones disponibles son: "registro", "actualiza" y "login".
+     */
     @PostMapping("/index")
     public String doPost(Model model) {
         if (this.necesitaLogin()) {
@@ -100,9 +120,10 @@ public class IndexController {
     }
 
     /**
-     * Comprueba si se necesita iniciar sesión para acceder a una página.
+     * Comprueba si se necesita un inicio de sesión para la opción actual.
      *
-     * @return true si se necesita iniciar sesión, de lo contrario false.
+     * @return true si no está logueado y la opción actual no es "login", indicando que se requiere un inicio de sesión;
+     * false si ya está logueado o si la opción actual es "login", lo que significa que no se requiere un inicio de sesión.
      */
     private Boolean necesitaLogin() {
         String opcion = this.getOpcion();
@@ -111,18 +132,22 @@ public class IndexController {
     }
 
     /**
-     * Método que maneja la solicitud GET para la página de registro.
+     * Prepara el modelo para la vista de registro, estableciendo el contenido a mostrar como "content/registro.html".
      *
-     * @param model Model
+     * @param model El modelo al que se agrega el atributo "contenido" con el valor "content/registro.html".
      */
     private void doGetRegistro(Model model) {
         model.addAttribute("contenido", "content/registro.html");
     }
 
     /**
-     * Método que maneja la solicitud GET para la lista de empleados.
+     * Prepara el modelo para la vista de listado de empleados, obteniendo la lista de empleados
+     * desde el servicio correspondiente y estableciendo atributos en el modelo para su visualización.
      *
-     * @param model Model
+     * @param model El modelo al que se agregan los atributos necesarios para la vista de listado de empleados:
+     *              - "usuarioCreado": indica si se confirma la creación de un usuario (true/false).
+     *              - "listaEmpleados": la lista de objetos Empleado obtenida del servicio.
+     *              - "contenido": la ruta del archivo HTML que contiene el listado de empleados ("content/listado-empleados.html").
      */
     private void doGetListado(Model model) {
         List<Empleado> listaEmpleados = this.empleadoService.obtenerListaEmpleados();
@@ -133,9 +158,18 @@ public class IndexController {
     }
 
     /**
-     * Método que maneja la solicitud GET para la consulta de empleados.
+     * Prepara el modelo para la vista de consulta de salario de un empleado, basándose en el número de DNI proporcionado.
+     * Si no se proporciona un DNI o se deja en blanco, muestra el buscador de DNI en la vista.
+     * Si se proporciona un DNI válido, obtiene el salario correspondiente y muestra la información en la vista.
      *
-     * @param model Model
+     * @param model El modelo al que se agregan los atributos necesarios para la vista de consulta de salario:
+     *              - Si no se proporciona un DNI o se deja en blanco:
+     *              - "contenido": la ruta del archivo HTML del buscador de DNI ("buscador/buscador.html").
+     *              - Si se proporciona un DNI válido:
+     *              - "dni": el número de DNI proporcionado.
+     *              - "salario": el salario obtenido del servicio correspondiente.
+     *              - "contenido": la ruta del archivo HTML que contiene la información del salario ("content/consulta-salario.html").
+     *              En caso de error al obtener el salario, se maneja la excepción y se agrega el mensaje de error al modelo.
      */
     private void doGetConsulta(Model model) {
         String dni = this.getRequestParameter("dni");
@@ -153,11 +187,13 @@ public class IndexController {
         }
     }
 
-
     /**
-     * Método que maneja la solicitud GET para la actualización de empleados.
+     * Maneja la lógica de redireccionamiento para la actualización o eliminación de elementos según los parámetros recibidos.
      *
-     * @param model Model
+     * @param model El modelo utilizado para procesar la actualización o eliminación de elementos.
+     * @return null si la acción es de edición y se redirige al método correspondiente ("redireccionaActualiza"),
+     * o el resultado del método "redireccionaEliminar" si la acción es de eliminación.
+     * En caso contrario, redirige al listado de elementos mediante el método "redireccionaListado".
      */
     private String doGetActualiza(Model model) {
         String editar = this.getRequestParameter("editar");
@@ -173,9 +209,16 @@ public class IndexController {
     }
 
     /**
-     * Redirige a la página de listado de empleados, realizando consultas según los parámetros proporcionados.
+     * Prepara el modelo para la vista de listado de empleados actualizada después de una acción de actualización o eliminación.
      *
-     * @param model Model
+     * @param model El modelo al que se agregan los atributos necesarios para la vista de listado actualizada:
+     *              - "contenido": la ruta del archivo HTML que muestra el listado de empleados actualizado ("content/listado-actualizacion-empleados.html").
+     *              - "actualizado": indica si se confirma la actualización de un empleado (true/false).
+     *              - "eliminado": indica si se confirma la eliminación de un empleado (true/false).
+     *              - "campo": el campo por el cual se filtrará la lista de empleados, si se especifica alguno.
+     *              - "valor": el valor del campo por el cual se filtrará la lista de empleados, si se especifica alguno.
+     *              - "listaEmpleados": la lista actualizada de objetos Empleado obtenida del servicio, filtrada por el campo y valor especificados.
+     *              Si no se proporciona ningún campo y valor, se obtiene la lista completa de empleados.
      */
     private void redireccionaListado(Model model) {
         String campo = this.getRequestParameter("campo");
@@ -193,10 +236,11 @@ public class IndexController {
     }
 
     /**
-     * Redirige a la eliminación de un empleado específico según el DNI proporcionado.
+     * Elimina un empleado identificado por su número de DNI y redirige a la página de actualización con una confirmación de eliminación.
      *
-     * @param dni   El DNI del empleado a eliminar.
-     * @param model Model
+     * @param dni   El número de DNI del empleado a eliminar.
+     * @param model El modelo utilizado para procesar la eliminación y redirigir a la confirmación.
+     * @return La redirección a la página de actualización con un indicador de confirmación de eliminación.
      */
     private String redireccionaEliminar(String dni, Model model) {
         this.empleadoService.eliminarEmpleado(dni);
@@ -204,10 +248,14 @@ public class IndexController {
     }
 
     /**
-     * Redirige a la página de actualización de un empleado específico según el DNI proporcionado.
+     * Prepara el modelo para la actualización de datos de un empleado identificado por su número de DNI.
+     * Obtiene la información del empleado por su DNI y agrega los atributos necesarios al modelo para cargar el formulario de actualización.
      *
-     * @param dni   El DNI del empleado a actualizar.
-     * @param model Model
+     * @param dni   El número de DNI del empleado cuyos datos se van a actualizar.
+     * @param model El modelo al que se agregan los atributos necesarios para el formulario de actualización:
+     *              - "editar": el número de DNI del empleado a editar.
+     *              - "empleado": los datos del empleado obtenidos del servicio o un objeto Empleado vacío si no se encuentra.
+     *              - "contenido": la ruta del archivo HTML que contiene el formulario de actualización ("content/formulario-actualizar.html").
      */
     private void redireccionaActualiza(String dni, Model model) {
         Optional<Empleado> result = this.empleadoService.obtenerEmpleadoPorDni(dni);
@@ -221,14 +269,19 @@ public class IndexController {
     }
 
     /**
-     * Método que maneja la solicitud GET para la página de inicio de sesión.
+     * Prepara el modelo para la vista de inicio de sesión.
      *
-     * @param model Model
+     * @param model El modelo al que se agrega el atributo "contenido" con la ruta del archivo HTML de inicio de sesión ("content/login.html").
      */
     private void doGetLogin(Model model) {
         model.addAttribute("contenido", "content/login.html");
     }
 
+    /**
+     * Cierra la sesión actual del usuario y redirige a la página de inicio de sesión.
+     *
+     * @return La redirección a la página de inicio de sesión después de invalidar la sesión actual.
+     */
     private String doGetCierraSesion() {
         HttpSession sesion = this.getSession();
         sesion.invalidate();
@@ -236,13 +289,21 @@ public class IndexController {
     }
 
     /**
-     * Método que maneja la solicitud GET para la página de bienvenida.
+     * Prepara el modelo para la vista de bienvenida.
      *
-     * @param model Model
+     * @param model El modelo al que se agrega el atributo "opcion" con la ruta del archivo HTML de bienvenida ("content/bienvenida.html").
      */
     private void doGetBienvenida(Model model) {
         model.addAttribute("opcion", "content/bienvenida.html");
     }
+
+    /**
+     * Procesa la solicitud POST para registrar un nuevo empleado con la información proporcionada.
+     *
+     * @param model El modelo utilizado para procesar el registro del empleado y redirigir según el resultado.
+     * @return Una redirección a la página de listado de empleados con un indicador de confirmación de creación,
+     *         o maneja una excepción mostrando un mensaje de error en el modelo en caso de problemas durante el registro.
+     */
 
     private String doPostRegistro(Model model) {
         String nombreRegistro = this.getRequestParameter("nombre");
@@ -269,9 +330,11 @@ public class IndexController {
     }
 
     /**
-     * Método que maneja la solicitud POST para la actualización de empleados.
+     * Procesa la solicitud POST para actualizar los datos de un empleado con la información proporcionada.
      *
-     * @param model Model
+     * @param model El modelo utilizado para procesar la actualización del empleado y redirigir según el resultado.
+     * @return Una redirección a la página de actualización con un indicador de confirmación de actualización,
+     *         o maneja una excepción mostrando un mensaje de error en el modelo en caso de problemas durante la actualización.
      */
     private String doPostActualiza(Model model) {
         String dniOriginal = this.getRequestParameter("editar");
@@ -310,9 +373,11 @@ public class IndexController {
     }
 
     /**
-     * Método que maneja la solicitud POST para la página de inicio de sesión.
+     * Procesa la solicitud POST para iniciar sesión de un administrador con las credenciales proporcionadas.
      *
-     * @param model Model
+     * @param model El modelo utilizado para el inicio de sesión del administrador y redirigir según el resultado.
+     * @return Una redirección a la página de bienvenida si el inicio de sesión es exitoso,
+     *         o invalida la sesión si las credenciales no son válidas.
      */
     private String doPostLogin(Model model) {
         HttpSession sesion = this.getSession();
@@ -334,17 +399,18 @@ public class IndexController {
     }
 
     /**
-     * Método que maneja la solicitud POST para la página por defecto.
+     * Maneja una solicitud POST por defecto y redirige a la página de bienvenida.
+     *
+     * @return Una redirección a la página de bienvenida por defecto.
      */
     private String doPostDefault() {
         return "redirect:/index?opcion=bienvenida";
     }
 
-
     /**
-     * Comprueba si el usuario ha iniciado sesión.
+     * Verifica si el usuario está actualmente logueado comprobando la sesión y su tiempo de expiración.
      *
-     * @return true si el usuario ha iniciado sesión, de lo contrario false.
+     * @return true si hay una sesión activa y no ha expirado; false en caso contrario.
      */
     private Boolean estaLogueado() {
         HttpSession sesion = this.getSession();
@@ -353,35 +419,73 @@ public class IndexController {
         return expiracion != null && actual.before(new Date(Date.parse(expiracion)));
     }
 
+    /**
+     * Obtiene el objeto HttpServletRequest actual asociado a la solicitud en curso.
+     *
+     * @return El objeto HttpServletRequest asociado a la solicitud actual.
+     */
     private HttpServletRequest getHttpRequest() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getRequest();
     }
 
+    /**
+     * Obtiene la sesión HTTP actual asociada a la solicitud en curso o crea una nueva si no existe.
+     *
+     * @return El objeto HttpSession asociado a la solicitud actual o una nueva sesión si no existe.
+     */
     private HttpSession getSession() {
         return this.getHttpRequest().getSession(true);
     }
 
+    /**
+     * Genera una redirección a la página de inicio de sesión ("/index?opcion=login").
+     *
+     * @return Una cadena que representa una redirección a la página de inicio de sesión.
+     */
     private String loginRedirect() {
         return "redirect:/index?opcion=login";
     }
 
+    /**
+     * Establece los atributos comunes en el modelo para su uso en las vistas, como la página actual y el estado de login.
+     *
+     * @param model El modelo al que se agregan los atributos comunes:
+     *              - "paginaActual": la opción actual obtenida del contexto.
+     *              - "logueado": indica si el usuario está logueado o no.
+     */
     private void estableceAtributosComunes(Model model) {
         Boolean logueado = this.estaLogueado();
         model.addAttribute("paginaActual", this.getOpcion());
         model.addAttribute("logueado", logueado);
     }
 
+    /**
+     * Obtiene el parámetro "opcion" de la solicitud actual, si está presente.
+     *
+     * @return El valor del parámetro "opcion" de la solicitud HTTP actual, o null si no está presente.
+     */
     private String getOpcion() {
         HttpServletRequest request = this.getHttpRequest();
         return request.getParameter("opcion");
     }
 
+    /**
+     * Obtiene el valor de un parámetro específico de la solicitud HTTP actual.
+     *
+     * @param parameter El nombre del parámetro que se desea obtener.
+     * @return El valor del parámetro especificado en la solicitud HTTP actual, o null si no está presente.
+     */
     private String getRequestParameter(String parameter) {
         HttpServletRequest request = this.getHttpRequest();
         return request.getParameter(parameter);
     }
-
+    /**
+     * Maneja una excepción estableciendo un mensaje de error y redirigiendo a la vista de manejo de excepciones.
+     *
+     * @param model   El modelo al que se agrega el mensaje de error.
+     * @param mensaje El mensaje de error a ser mostrado.
+     */
     private void manejaException(Model model, String mensaje) {
         model.addAttribute("mensajeError", mensaje);
         model.addAttribute("contenido", "/exception/error.html");

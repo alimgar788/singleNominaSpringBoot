@@ -26,11 +26,23 @@ public class EmpleadoService implements EmpleadoServiceInterface {
     @Autowired
     private Validator validador;
 
+    /**
+     * Obtiene una lista de empleados activos.
+     *
+     * @return Una lista de objetos Empleado cuyo estado de empleado es verdadero.
+     */
     @Override
     public List<Empleado> obtenerListaEmpleados() {
         return empleadoRepository.findAllByEstadoEmpleadoIsTrue();
     }
 
+    /**
+     * Obtiene una lista filtrada de empleados activos basada en un campo y su valor asociado.
+     *
+     * @param campo Campo por el cual se va a filtrar la lista de empleados.
+     * @param valor Valor asociado al campo para realizar el filtro.
+     * @return Una lista de objetos Empleado filtrada por el campo y valor especificados.
+     */
     @Override
     public List<Empleado> obtenerListaEmpleados(String campo, Object valor) {
         if (campo == null || valor == null || valor.equals("")) {
@@ -54,6 +66,13 @@ public class EmpleadoService implements EmpleadoServiceInterface {
         return empleadoRepository.findAllByEstadoEmpleadoIsTrue();
     }
 
+    /**
+     * Actualiza la información de un empleado en la base de datos, realizando validaciones y actualizando su estado y nómina si es necesario.
+     *
+     * @param empl El objeto Empleado con la información actualizada a guardar.
+     * @return El objeto Empleado actualizado en la base de datos.
+     * @throws RuntimeException Si se encuentran errores de validación al actualizar o al manipular la información de la nómina.
+     */
     @Override
     public Empleado actualizaEmpleado(Empleado empl) throws RuntimeException {
 
@@ -81,6 +100,13 @@ public class EmpleadoService implements EmpleadoServiceInterface {
         }
     }
 
+    /**
+     * Registra un nuevo empleado en la base de datos o actualiza la información si el empleado ya existe o está inactivo.
+     *
+     * @param empl El objeto Empleado a registrar o actualizar.
+     * @return El objeto Empleado registrado o actualizado en la base de datos.
+     * @throws RuntimeException Si el DNI ya está asociado a un empleado registrado o si hay errores al actualizar la información del empleado.
+     */
     @Override
     public Empleado registraEmpleado(Empleado empl) throws RuntimeException {
         Optional<Empleado> result = this.obtenerEmpleadoPorDni(empl.getDni());
@@ -91,11 +117,24 @@ public class EmpleadoService implements EmpleadoServiceInterface {
         }
     }
 
+    /**
+     * Busca un empleado activo por su número de identificación (DNI) en el repositorio de empleados.
+     *
+     * @param dni El número de identificación (DNI) del empleado a buscar.
+     * @return Un Optional que puede contener al empleado activo si se encuentra por su DNI, o vacío si no existe.
+     */
     @Override
     public Optional<Empleado> obtenerEmpleadoPorDni(String dni) {
         return empleadoRepository.findByDniAndEstadoEmpleadoIsTrue(dni);
     }
 
+    /**
+     * Elimina un empleado de la base de datos según su número de identificación (DNI).
+     *
+     * @param dni El número de identificación (DNI) del empleado a eliminar.
+     * @return El objeto Empleado eliminado de la base de datos.
+     * @throws RuntimeException Si se intenta eliminar un empleado que no existe en la base de datos.
+     */
     @Override
     public Empleado eliminarEmpleado(String dni) throws RuntimeException {
         Optional<Empleado> empl = empleadoRepository.findById(dni);
@@ -108,6 +147,13 @@ public class EmpleadoService implements EmpleadoServiceInterface {
 
     }
 
+    /**
+     * Obtiene el salario de un empleado por su número de identificación (DNI).
+     *
+     * @param dni El número de identificación (DNI) del empleado del cual se desea obtener el salario.
+     * @return El salario del empleado correspondiente al DNI proporcionado.
+     * @throws RuntimeException Si el DNI no está registrado en la base de datos o si hay problemas al acceder al salario.
+     */
     @Override
     public Double obtenerSalarioPorDni(String dni) throws RuntimeException {
         Optional<Empleado> result = empleadoRepository.findByDniAndEstadoEmpleadoIsTrue(dni);
